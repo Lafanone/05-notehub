@@ -2,15 +2,15 @@ import { useState } from 'react';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { useDebouncedCallback } from 'use-debounce';
 import styles from './App.module.css';
-import { fetchNotes, createNote, deleteNote, type CreateNoteParams } from '../../services/noteService';
+import { fetchNotes, deleteNote } from '../../services/noteService'; // createNote більше не імпортуємо тут
 
 import SearchBox from '../SearchBox/SearchBox';
 import Pagination from '../Pagination/Pagination';
 import NoteList from '../NoteList/NoteList';
 import Modal from '../Modal/Modal';
 import NoteForm from '../NoteForm/NoteForm';
-import Loader from '../Loader/Loader'; 
-import Error from '../Error/Error';   
+import Loader from '../Loader/Loader';
+import Error from '../Error/Error';
 
 const App = () => {
   const [page, setPage] = useState(1);
@@ -38,17 +38,6 @@ const App = () => {
     setPage(1); 
   }, 300);
 
-  const handleAddNote = async (noteData: CreateNoteParams) => {
-    try {
-      await createNote(noteData);
-      setIsModalOpen(false);
-      setPage(1);
-      refetch();
-    } catch (error) {
-      console.error('Error creating note:', error);
-    }
-  };
-
   const handleDeleteNote = async (id: string) => {
     try {
       await deleteNote(id);
@@ -64,7 +53,6 @@ const App = () => {
   return (
     <div className={styles.app}>
       <header className={styles.toolbar}>
-
         <SearchBox onSearch={handleSearch} />
 
         <button className={styles.button} onClick={openModal}>
@@ -94,7 +82,7 @@ const App = () => {
       )}
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <NoteForm onSubmit={handleAddNote} onCancel={closeModal} />
+        <NoteForm onCancel={closeModal} />
       </Modal>
     </div>
   );
