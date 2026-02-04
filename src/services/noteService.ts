@@ -8,12 +8,14 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-    const token = import.meta.env.VITE_NOTEHUB_TOKEN;
+  const rawToken = import.meta.env.VITE_NOTEHUB_TOKEN;
+  const token = rawToken ? rawToken.replace(/"/g, '') : null;
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
-})
+});
 
 export interface FetchNotesParams {
   page: number;
@@ -23,16 +25,13 @@ export interface FetchNotesParams {
 
 export interface FetchNotesResponse {
   notes: Note[];
-  page: number;
-  perPage: number;
-  total: number;
   totalPages: number;
 }
 
 export interface CreateNoteParams {
   title: string;
   content: string;
-  category: string; 
+  tag: string; 
 }
 
 export const fetchNotes = async (
@@ -45,11 +44,11 @@ export const fetchNotes = async (
 };
 
 export const createNote = async (noteData: CreateNoteParams): Promise<Note> => {
-    const { data } = await api.post<Note>('/notes', noteData);
-    return data;
-}
+  const { data } = await api.post<Note>('/notes', noteData);
+  return data;
+};
 
 export const deleteNote = async (id: string): Promise<Note> => {
-    const { data } = await api.delete<Note>(`/notes/${id}`);
-    return data;
-}
+  const { data } = await api.delete<Note>(`/notes/${id}`);
+  return data;
+};

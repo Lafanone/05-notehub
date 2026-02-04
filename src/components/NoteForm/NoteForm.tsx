@@ -37,7 +37,7 @@ const NoteForm = ({ onSubmit, onCancel }: NoteFormProps) => {
         onSubmit({
             title: values.title,
             content: values.content,
-            category: values.tag,
+            tag: values.tag,
         });
         resetForm();
     };
