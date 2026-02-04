@@ -18,13 +18,13 @@ api.interceptors.request.use((config) => {
 export interface FetchNotesParams {
   page: number;
   perPage: number;
-  keyword?: string;
+  search?: string;
 }
 
 export interface FetchNotesResponse {
-  data: Note[];
+  notes: Note[];
   page: number;
-  limit: number;
+  perPage: number;
   total: number;
   totalPages: number;
 }

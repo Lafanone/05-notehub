@@ -1,11 +1,16 @@
 import { useState } from 'react';
-import { useQuery, keepPreviousData } from '@tanstack/react-query'; // Імпорт хука
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { useDebouncedCallback } from 'use-debounce';
 import styles from './App.module.css';
 import { fetchNotes, createNote, deleteNote, type CreateNoteParams } from '../../services/noteService';
 
+import SearchBox from '../SearchBox/SearchBox';
 import Pagination from '../Pagination/Pagination';
 import NoteList from '../NoteList/NoteList';
-
+import Modal from '../Modal/Modal';
+import NoteForm from '../NoteForm/NoteForm';
+import Loader from '../Loader/Loader'; 
+import Error from '../Error/Error';   
 
 const App = () => {
   const [page, setPage] = useState(1);
@@ -20,18 +25,18 @@ const App = () => {
       fetchNotes({
         page,
         perPage: PER_PAGE,
-        keyword: searchQuery,
+        search: searchQuery,
       }),
     placeholderData: keepPreviousData,
-  });;
+  });
 
-  const notes = data?.data || [];
+  const notes = data?.notes || [];
   const totalPages = data?.totalPages || 1;
 
-  const handleSearch = (query: string) => {
+  const handleSearch = useDebouncedCallback((query: string) => {
     setSearchQuery(query);
-    setPage(1);
-  };
+    setPage(1); 
+  }, 300);
 
   const handleAddNote = async (noteData: CreateNoteParams) => {
     try {
@@ -53,10 +58,18 @@ const App = () => {
     }
   };
 
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   return (
     <div className={styles.app}>
       <header className={styles.toolbar}>
+
         <SearchBox onSearch={handleSearch} />
+
+        <button className={styles.button} onClick={openModal}>
+          Create note +
+        </button>
 
         {totalPages > 1 && (
           <Pagination
@@ -65,29 +78,23 @@ const App = () => {
             onPageChange={setPage}
           />
         )}
-        
-        <button 
-          className={styles.addButton} 
-          onClick={() => setIsModalOpen(true)}
-        >
-          Create Note
-        </button>
       </header>
 
-      {isError && <p>Error loading notes...</p>}
-
-      {isLoading && <p>Loading...</p>}
+      {isError && <Error />}
+      {isLoading && <Loader />}
 
       {!isLoading && !isError && notes.length > 0 && (
         <NoteList notes={notes} onDelete={handleDeleteNote} />
       )}
 
       {!isLoading && !isError && notes.length === 0 && (
-         <p>No notes found. Create one!</p>
+         <p style={{ textAlign: 'center', marginTop: '20px' }}>
+           No notes found. Create one!
+         </p>
       )}
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <NoteForm onSubmit={handleAddNote} />
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <NoteForm onSubmit={handleAddNote} onCancel={closeModal} />
       </Modal>
     </div>
   );

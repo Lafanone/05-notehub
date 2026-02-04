@@ -23,8 +23,7 @@ const Pagination = ({ totalPages, currentPage, onPageChange }: PaginationProps) 
       pageCount={totalPages}
       forcePage={currentPage - 1}
       renderOnZeroPageCount={null}
-      
-      // Класи CSS модулів
+
       containerClassName={styles.pagination}  
       pageClassName={styles.item}                
       pageLinkClassName={styles.link}            

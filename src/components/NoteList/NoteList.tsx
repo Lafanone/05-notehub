@@ -10,14 +10,14 @@ const NoteList = ({ notes, onDelete }: NoteListProps) => {
   return (
     <ul className={styles.list}>
       {notes.map((note) => (
-        <li key={note._id} className={styles.listItem}>
+        <li key={note.id} className={styles.listItem}>
           <h2 className={styles.title}>{note.title}</h2>
           <p className={styles.content}>{note.content}</p>
           <div className={styles.footer}>
-            <span className={styles.tag}>{note.category}</span>
+            <span className={styles.tag}>{note.tag}</span>
             <button 
               className={styles.button} 
-              onClick={() => onDelete(note._id)}
+              onClick={() => onDelete(note.id)}
             >
               Delete
             </button>
