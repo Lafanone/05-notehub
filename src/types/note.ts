@@ -6,9 +6,3 @@ export interface Note {
   createdAt: string;
   updatedAt: string;
 }
-
-export interface NoteTag{
-  id: string;
-  name: string;
-  color: string;
-}
