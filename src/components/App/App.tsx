@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { useDebouncedCallback } from 'use-debounce';
 import styles from './App.module.css';
-import { fetchNotes, deleteNote } from '../../services/noteService'; // createNote більше не імпортуємо тут
+// Прибираємо імпорт deleteNote, він тут більше не потрібен
+import { fetchNotes } from '../../services/noteService';
 
 import SearchBox from '../SearchBox/SearchBox';
 import Pagination from '../Pagination/Pagination';
@@ -19,7 +20,7 @@ const App = () => {
 
   const PER_PAGE = 6;
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['notes', page, searchQuery],
     queryFn: () =>
       fetchNotes({
@@ -37,15 +38,6 @@ const App = () => {
     setSearchQuery(query);
     setPage(1); 
   }, 300);
-
-  const handleDeleteNote = async (id: string) => {
-    try {
-      await deleteNote(id);
-      refetch();
-    } catch (error) {
-      console.error('Error deleting note:', error);
-    }
-  };
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -72,7 +64,7 @@ const App = () => {
       {isLoading && <Loader />}
 
       {!isLoading && !isError && notes.length > 0 && (
-        <NoteList notes={notes} onDelete={handleDeleteNote} />
+        <NoteList notes={notes} />
       )}
 
       {!isLoading && !isError && notes.length === 0 && (
